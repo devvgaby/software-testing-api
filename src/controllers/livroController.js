@@ -1,24 +1,28 @@
-const { criarLivro } = require('../services/livroService');
-const Livro = require('../models/Livro');
+const { criarLivro, buscarLivroPorId } = require("../services/livroService");
 
-const criar = (req, res) => {
+
+const criar = async (req, res) => {
     const { titulo, autor } = req.body;
 
-    if(!titulo || !autor) return res.status(400).
-        json({ erro: 'titulo e autor são obrigatórios' })
+    if (!titulo || !autor) return res.status(400)
+        .json({ erro: 'titulo e autor são obrigatórios'})
 
-    const livro = criarLivro(titulo, autor);
+    const livro = await criarLivro(titulo, autor);
     res.status(201).json(livro);
 }
 
 const buscarPorId = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;  
 
-  const livro = await Livro.findByPk(id);
+    const livro = await buscarLivroPorId(id);
 
-  if (!livro) return res.status(404).json({ erro: 'Livro não encontrado!' });
+    if (!livro) return res.status(404).json({ erro: "Livro não encontrado!" });
 
-  return res.status(200).json(livro);
+    return res.status(200).json(livro);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro" });
+  }
 };
 
 module.exports = { criar, buscarPorId };

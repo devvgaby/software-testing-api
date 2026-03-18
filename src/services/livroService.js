@@ -1,9 +1,16 @@
-const livros = [];
+const { Livro }= require('../models');
 
-const criarLivro = (titulo, autor) => {
-    const livro = { id: livros.length + 1, titulo, autor };
-    livros.push(livro);
-    return livro;
+const criarLivro = async (titulo, autor) => {
+  const livro = await Livro.create({ titulo, autor });
+  return {
+    id: livro.id,
+    titulo: livro.titulo,
+    autor: livro.autor,
+  };
+};
+
+const buscarLivroPorId = async (id) => {
+    return await Livro.findByPk(id);
 }
 
-module.exports = { criarLivro }
+module.exports = { criarLivro, buscarLivroPorId }
