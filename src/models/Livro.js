@@ -15,10 +15,10 @@ const Livro = sequelize.define('Livro', {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-}, {
+  }, {
   tableName: 'livros',
   timestamps: true,
   underscored: false,
 });
 
-module.exports = Livro;
+module.exports = Livro; 
