@@ -2,9 +2,8 @@ const {
   criarLivro,
   buscarLivroPorId,
   atualizarLivroPorId,
+  deletarLivroPorId,
 } = require("../services/livroService");
-
-const { Livro } = require ("../models");
 
 const criar = async (req, res) => {
   const { titulo, autor } = req.body;
@@ -48,18 +47,17 @@ const atualizarPorId = async (req, res) => {
 };
 
 const deletarPorId = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const livro = await Livro.findByPk(id);
+    const livro = await deletarLivroPorId(id);
 
-  if (!livro) {
-    return res.status(404).json({ erro: "Livro não encontrado" });
+    if (!livro) {
+      return res.status(404).json({ erro: "Livro não encontrado" });
+    }
+    return res.status(204).json(livro);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  await livro.destroy();
-
-  return res.status(204).send();
 };
-
-
-module.exports = { criar, buscarPorId, atualizarPorId, deletarPorId  };
+module.exports = { criar, buscarPorId, atualizarPorId, deletarPorId };

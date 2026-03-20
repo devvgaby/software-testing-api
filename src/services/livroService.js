@@ -1,4 +1,4 @@
-const { Livro }= require('../models');
+const { Livro } = require("../models");
 
 const criarLivro = async (titulo, autor) => {
   const livro = await Livro.create({ titulo, autor });
@@ -10,8 +10,8 @@ const criarLivro = async (titulo, autor) => {
 };
 
 const buscarLivroPorId = async (id) => {
-    return await Livro.findByPk(id);
-}
+  return await Livro.findByPk(id);
+};
 
 const atualizarLivroPorId = async (id, titulo, autor) => {
   const livro = await Livro.findByPk(id);
@@ -26,4 +26,17 @@ const atualizarLivroPorId = async (id, titulo, autor) => {
   return livro;
 };
 
-module.exports = { criarLivro, buscarLivroPorId, atualizarLivroPorId }
+const deletarLivroPorId = async (id) => {
+  const livro = await Livro.findByPk(id);
+
+  if (!livro) return null;
+
+  await livro.destroy();
+};
+
+module.exports = {
+  criarLivro,
+  buscarLivroPorId,
+  atualizarLivroPorId,
+  deletarLivroPorId
+};
