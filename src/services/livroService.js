@@ -13,4 +13,17 @@ const buscarLivroPorId = async (id) => {
     return await Livro.findByPk(id);
 }
 
-module.exports = { criarLivro, buscarLivroPorId }
+const atualizarLivroPorId = async (id, titulo, autor) => {
+  const livro = await Livro.findByPk(id);
+
+  if (!livro) return null;
+
+  livro.titulo = titulo;
+  livro.autor = autor;
+
+  await livro.save();
+
+  return livro;
+};
+
+module.exports = { criarLivro, buscarLivroPorId, atualizarLivroPorId }

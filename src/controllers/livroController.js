@@ -1,6 +1,8 @@
-const { criarLivro, buscarLivroPorId } = require("../services/livroService");
-const { Livro } = require("../models"); 
-
+const {
+  criarLivro,
+  buscarLivroPorId,
+  atualizarLivroPorId,
+} = require("../services/livroService");
 
 const criar = async (req, res) => {
   const { titulo, autor } = req.body;
@@ -27,21 +29,20 @@ const buscarPorId = async (req, res) => {
 };
 
 const atualizarPorId = async (req, res) => {
-  const { id } = req.params;
-  const { titulo, autor } = req.body;
+  try {
+    const { id } = req.params;
+    const { titulo, autor } = req.body;
 
-  const livro = await Livro.findByPk(id);
+    const livro = await atualizarLivroPorId(id, titulo, autor);
 
-  if (!livro) {
-    return res.status(400).json({ erro: "Livro não encontrado" });
+    if (!livro) {
+      return res.status(404).json({ erro: "Livro não encontrado" });
+    }
+
+    return res.status(200).json(livro);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  livro.titulo = titulo;
-  livro.autor = autor;
-
-  await livro.save();
-
-  return res.status(200).json(livro);
 };
 
 module.exports = { criar, buscarPorId, atualizarPorId };
