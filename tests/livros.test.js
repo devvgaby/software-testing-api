@@ -28,3 +28,10 @@ test("PUT /livros/id atualizar livro", async () => {
   expect(res.body.autor).toBe("Martin Code");
 });
 
+test("DELETE /livros/id deletar livro", async () => {
+  const res = await request(api)
+    .delete("/livros/1");
+
+  expect(res.status).toBe(204);
+});
+
