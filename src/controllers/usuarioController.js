@@ -1,14 +1,19 @@
-const Usuario = require("../models/Usuario");
+const {
+  criarUsuario,
+  buscarUsuarioPorId,
+  listarUsuarios,
+  atualizarUsuarioPorId,
+  deletarUsuarioPorId,
+} = require("../services/usuarioService");
 
 const criar = async (req, res) => {
-  const { nome, email, senha, tipo } = req.body;
-
-  if (!nome || !email || !senha || !tipo) {
-    return res.status(400).json({ erro: "Todos os campos são obrigatórios" });
-  }
-
   try {
-    const usuario = await Usuario.create({ nome, email, senha, tipo });
+    const { nome, email, senha, tipo } = req.body;
+    const usuario = await criarUsuario(nome, email, senha, tipo);
+
+    if (!nome || !email || !senha || !tipo) {
+      return res.status(400).json({ erro: "Todos os campos são obrigatórios" });
+    }
     return res.status(201).json(usuario);
   } catch (err) {
     return res.status(400).json({ erro: "Email já cadastrado" });
@@ -16,54 +21,62 @@ const criar = async (req, res) => {
 };
 
 const listar = async (req, res) => {
-  const usuarios = await Usuario.findAll();
+  try {
+    const usuarios = await listarUsuarios();
 
-  return res.status(200).json(usuarios);
+    return res.status(200).json(usuarios);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
+  }
 };
 
 const buscarPorId = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const usuario = await Usuario.findByPk(id);
+    const usuario = await buscarUsuarioPorId(id);
 
-  if (!usuario) {
-    return res.status(404).json({ erro: "Nenhum usuário encontrado!" });
+    if (!usuario) {
+      return res.status(404).json({ erro: "Nenhum usuário encontrado!" });
+    }
+
+    return res.status(200).json(usuario);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  return res.status(200).json(usuario);
 };
 
 const atualizarPorId = async (req, res) => {
-  const { id } = req.params;
-  const { nome, email, senha } = req.body;
+  try {
+    const { id } = req.params;
+    const { nome, email, senha } = req.body;
 
-  const usuario = await Usuario.findByPk(id);
+    const usuario = await atualizarUsuarioPorId(id, nome, email, senha);
 
-  if (!usuario) {
-    return res.status(404).json({ erro: "Usuário não encontrado!" });
+    if (!usuario) {
+      return res.status(404).json({ erro: "Usuário não encontrado!" });
+    }
+
+    return res.status(200).json(usuario);
+  } catch (error) {
+    return res.status(400).json({ erro: "Erro ao atualizar usuário" });
   }
-
-  usuario.nome = nome;
-  usuario.email = email;
-  usuario.senha = senha;
-
-  await usuario.save();
-
-  return res.status(200).json(usuario);
 };
 
 const deletarPorId = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const usuario = await Usuario.findByPk(id);
+    const usuario = await deletarUsuarioPorId(id);
 
-  if (!usuario) {
-    return res.status(404).json({ erro: "Usuário não encontrado!" });
+    if (!usuario) {
+      return res.status(404).json({ erro: "Usuário não encontrado!" });
+    }
+
+    return res.status(200).json({ mensagem: "Usuário removido" });
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  await usuario.destroy();
-
-  return res.status(200).json({ mensagem: "Usuário removido" });
 };
 
 module.exports = { criar, listar, buscarPorId, atualizarPorId, deletarPorId };
