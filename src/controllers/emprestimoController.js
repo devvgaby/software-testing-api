@@ -1,86 +1,70 @@
-const { Emprestimo } = require('../models');
+const { 
+  criarEmprestimo, 
+  listarEmprestimos, 
+  buscarEmprestimoPorId, 
+  atualizarEmprestimoPorId, 
+  deletarEmprestimoPorId 
+} = require("../services/emprestimoService");
 
 const criar = async (req, res) => {
-  const {
-    usuario_id,
-    livro_id,
-    data_emprestimo,
-    data_devolucao_prevista,
-  } = req.body;
+  try {
+    const { usuario_id, livro_id, data_emprestimo, data_devolucao_prevista } = req.body;
 
-  if (!usuario_id || !livro_id || !data_emprestimo || !data_devolucao_prevista) {
-    return res.status(400).json({ erro: "Campos obrigatórios faltando!" });
+    if (!usuario_id || !livro_id || !data_emprestimo || !data_devolucao_prevista) {
+      return res.status(400).json({ erro: "Campos obrigatórios faltando!" });
+    }
+
+    const emprestimo = await criarEmprestimo(usuario_id, livro_id, data_emprestimo, data_devolucao_prevista);
+    return res.status(201).json(emprestimo);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  const emprestimo = await Emprestimo.create({
-    usuario_id,
-    livro_id,
-    data_emprestimo,
-    data_devolucao_prevista,
-    data_devolucao_real: null, 
-  });
-
-  return res.status(201).json(emprestimo);
 };
 
 const listar = async (req, res) => {
-  const emprestimos = await Emprestimo.findAll();
-
-  return res.status(200).json(emprestimos);
+  try {
+    const emprestimos = await listarEmprestimos();
+    return res.status(200).json(emprestimos);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
+  }
 };
 
 const buscarPorId = async (req, res) => {
-  const { id } = req.params;
-
-  const emprestimo = await Emprestimo.findByPk(id);
-
-  if (!emprestimo) {
-    return res.status(404).json({ erro: "Empréstimo não encontrado." });
+  try {
+    const { id } = req.params;
+    const emprestimo = await buscarEmprestimoPorId(id);
+    if (!emprestimo) return res.status(404).json({ erro: "Empréstimo não encontrado." });
+    return res.status(200).json(emprestimo);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  return res.status(200).json(emprestimo);
 };
 
 const atualizarPorId = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const { usuario_id, livro_id, data_emprestimo, data_devolucao_prevista, data_devolucao_real } = req.body;
 
-  const emprestimo = await Emprestimo.findByPk(id);
+    const emprestimo = await atualizarEmprestimoPorId(id, usuario_id, livro_id, data_emprestimo, data_devolucao_prevista, data_devolucao_real);
 
-  if (!emprestimo) {
-    return res.status(404).json({ erro: "Empréstimo não encontrado." });
+    if (!emprestimo) return res.status(404).json({ erro: "Empréstimo não encontrado." });
+    return res.status(200).json(emprestimo);
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  const {
-    usuario_id,
-    livro_id,
-    data_emprestimo,
-    data_devolucao_prevista,
-    data_devolucao_real,
-  } = req.body;
-
-  await emprestimo.update({
-    usuario_id,
-    livro_id,
-    data_emprestimo,
-    data_devolucao_prevista,
-    data_devolucao_real,
-  });
-
-  return res.status(200).json(emprestimo);
 };
 
 const deletarPorId = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const deletado = await deletarEmprestimoPorId(id);
 
-  const emprestimo = await Emprestimo.findByPk(id);
-
-  if (!emprestimo) {
-    return res.status(404).json({ erro: "Empréstimo não encontrado." });
+    if (!deletado) return res.status(404).json({ erro: "Empréstimo não encontrado." });
+    return res.status(200).json({ mensagem: "Empréstimo removido" });
+  } catch (error) {
+    return res.status(500).json({ erro: "Erro interno do servidor" });
   }
-
-  await emprestimo.destroy();
-
-  return res.status(200).json({ mensagem: "Empréstimo removido" });
 };
 
 module.exports = {
