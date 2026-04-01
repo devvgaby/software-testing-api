@@ -1,9 +1,10 @@
 const { Router } = require('express');
-const { criar, buscarPorId, atualizarPorId, deletarPorId } = require('../controllers/livroController');
+const { criar, listar, buscarPorId, atualizarPorId, deletarPorId } = require('../controllers/livroController');
 
 const router = Router();
 
 router.post('/', criar);
+router.get('/', listar);
 router.get('/:id', buscarPorId);
 router.put('/:id', atualizarPorId)
 router.delete('/:id', deletarPorId)

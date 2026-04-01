@@ -13,6 +13,10 @@ const buscarLivroPorId = async (id) => {
   return await Livro.findByPk(id);
 };
 
+const listarLivros = async () => {
+  return await Livro.findAll();
+};
+
 const atualizarLivroPorId = async (id, titulo, autor) => {
   const livro = await Livro.findByPk(id);
 
@@ -34,9 +38,11 @@ const deletarLivroPorId = async (id) => {
   await livro.destroy();
 };
 
+
 module.exports = {
   criarLivro,
   buscarLivroPorId,
   atualizarLivroPorId,
-  deletarLivroPorId
+  deletarLivroPorId,
+  listarLivros
 };
