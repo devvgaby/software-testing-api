@@ -6,16 +6,22 @@ const {
   deletarUsuarioPorId,
 } = require("../services/usuarioService");
 
+const bcrypt = require("bcrypt");
+
 const criar = async (req, res) => {
   try {
     const { nome, email, senha, tipo } = req.body;
-    const usuario = await criarUsuario(nome, email, senha, tipo);
 
     if (!nome || !email || !senha || !tipo) {
       return res.status(400).json({ erro: "Todos os campos são obrigatórios" });
     }
+
+    const senhaHash = await bcrypt.hash(senha, 10);
+
+    const usuario = await criarUsuario(nome, email, senhaHash, tipo);
+
     return res.status(201).json(usuario);
-  } catch (err) {
+  } catch (error) {
     return res.status(400).json({ erro: "Email já cadastrado" });
   }
 };
