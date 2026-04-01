@@ -11,7 +11,7 @@
     "dev": "nodemon src/server.js",
     "test": "jest --watchAll",
     "db:migrate": "sequelize-cli db:migrate",
-    "db-migrate-undo": "sequelize-cli db:migrate:undo"
+    "db:migrate:undo": "sequelize-cli db:migrate:undo"
   },
   "repository": {
     "type": "git",
@@ -20,11 +20,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/devvgaby/software-testing-api/issues"
+    "url": "https://github.com/devvgaby/software-testing-api.git/issues"
   },
-  "homepage": "https://github.com/devvgaby/software-testing-api#readme",
+  "homepage": "https://github.com/devvgaby/software-testing-api.git/#readme",
   "dependencies": {
+    "axios": "^1.13.6",
+    "better-sqlite3": "^12.8.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "jest": "^30.3.0",
@@ -32,6 +36,7 @@
     "nodemon": "^3.1.14",
     "sequelize": "^6.37.8",
     "sequelize-cli": "^6.6.5",
+    "sqlite3": "^6.0.1",
     "supertest": "^7.2.2"
   }
 }
