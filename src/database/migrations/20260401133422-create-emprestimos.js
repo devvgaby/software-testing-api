@@ -18,7 +18,7 @@ module.exports = {
           model: "usuarios",
           key: "id",
         },
-        onDelete: "RESTRICT", 
+        onDelete: "RESTRICT",
         onUpdate: "CASCADE",
       },
 
@@ -29,7 +29,7 @@ module.exports = {
           model: "livros",
           key: "id",
         },
-        onDelete: "RESTRICT", 
+        onDelete: "RESTRICT",
         onUpdate: "CASCADE",
       },
 

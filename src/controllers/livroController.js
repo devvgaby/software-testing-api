@@ -3,7 +3,7 @@ const {
   buscarLivroPorId,
   atualizarLivroPorId,
   deletarLivroPorId,
-  listarLivros
+  listarLivros,
 } = require("../services/livroService");
 
 const criar = async (req, res) => {
@@ -16,7 +16,6 @@ const criar = async (req, res) => {
   res.status(201).json(livro);
 };
 
-
 const listar = async (req, res) => {
   try {
     const livros = await listarLivros();
@@ -26,7 +25,6 @@ const listar = async (req, res) => {
     }
 
     return res.status(200).json(livros);
-
   } catch (error) {
     return res.status(500).json({ erro: "Erro interno do servidor" });
   }
@@ -78,5 +76,4 @@ const deletarPorId = async (req, res) => {
   }
 };
 
-
-module.exports = { criar, buscarPorId, listar, atualizarPorId, deletarPorId,  };
+module.exports = { criar, buscarPorId, listar, atualizarPorId, deletarPorId };
