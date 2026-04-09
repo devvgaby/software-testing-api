@@ -1,83 +1,107 @@
 const { Multa } = require("../models");
 
-const formatar = (multa) => ({
-  ...multa.toJSON(),
-  valor: Number(multa.valor).toFixed(2), // usado para garantir que o valor seja retornado como string com 2 casas decimais, mesmo que seja armazenado como decimal 
-});
+const {
+  criarMulta,
+  buscarMultaPorId,
+  atualizarMultaPorId,
+  deletarMultaPorId,
+  listarMultas,
+} = require("../services/multaService");
+
+const formatar = (multa) => {
+  if (!multa) return null;
+
+  const multaRaw = multa.toJSON ? multa.toJSON() : multa;
+
+  return {
+    ...multaRaw,
+    valor: Number(multaRaw.valor).toFixed(2),
+  };
+};
 
 const criar = async (req, res) => {
-  const { valor, pago, emprestimo_id } = req.body;
+  try {
+    const { valor, pago, emprestimo_id } = req.body;
 
-  if (valor == null || typeof pago !== "boolean" || emprestimo_id == null) {
-    return res.status(400).json({ error: "Todos os campos são obrigatórios e válidos" });
-  }
+    if (valor == null || typeof pago !== "boolean" || emprestimo_id == null) {
+      return res
+        .status(400)
+        .json({ error: "Todos os campos são obrigatórios e válidos" });
+    }
 
-  if (valor <= 0) {
-    return res.status(400).json({ error: "valor deve ser maior que zero" });
-  }
-
-  const multa = await Multa.create({ valor, pago, emprestimo_id });
-  return res.status(201).json(formatar(multa));
-};
-
-const listar = async (req, res) => {
-  const multas = await Multa.findAll();
-  return res.status(200).json(multas.map(formatar)); // usado para garantir que cada multa seja formatada corretamente antes de ser retornada na resposta
-};
-
-const buscarPorId = async (req, res) => {
-  const { id } = req.params;
-  const multa = await Multa.findByPk(id);
-
-  if (!multa) {
-    return res.status(404).json({ error: "Multa não encontrada" });
-  }
-
-  return res.status(200).json(formatar(multa));
-};
-
-const atualizarPorId = async (req, res) => {
-  const { id } = req.params;
-  const { valor, pago, emprestimo_id } = req.body;
-
-  const multa = await Multa.findByPk(id);
-
-  if (!multa) {
-    return res.status(404).json({ error: "Multa não encontrada" });
-  }
-
-  if (valor != null) {
     if (valor <= 0) {
       return res.status(400).json({ error: "valor deve ser maior que zero" });
     }
-    multa.valor = valor;
-  }
 
-  if (pago != null) {
-    if (typeof pago !== "boolean") {
-      return res.status(400).json({ error: "pago deve ser booleano" });
+    const multa = await criarMulta({ valor, pago, emprestimo_id });
+
+    return res.status(201).json(formatar(multa));
+  } catch (err) {
+  
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao criar multa" });
+  }
+};
+
+const listar = async (req, res) => {
+  try {
+    const multas = await listarMultas();
+    // Garante que só tentará formatar se houver multas
+    return res.status(200).json(multas.map(formatar));
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao listar multas" });
+  }
+};
+
+const buscarPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const multa = await buscarMultaPorId(id);
+
+    if (!multa) {
+      return res.status(404).json({ error: "Multa não encontrada" });
     }
-    multa.pago = pago;
-  }
 
-  if (emprestimo_id != null) {
-    multa.emprestimo_id = emprestimo_id;
+    return res.status(200).json(formatar(multa));
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao buscar multa" });
   }
+};
 
-  await multa.save();
-  return res.status(200).json(formatar(multa));
+const atualizarPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { valor, pago, emprestimo_id } = req.body;
+
+    const multa = await atualizarMultaPorId(id, valor, pago, emprestimo_id);
+
+    if (!multa) {
+      return res.status(404).json({ error: "Multa não encontrada" });
+    }
+
+    return res.status(200).json(formatar(multa));
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao atualizar multa" });
+  }
 };
 
 const deletarPorId = async (req, res) => {
-  const { id } = req.params;
-  const multa = await Multa.findByPk(id);
+  try {
+    const { id } = req.params;
+    const multa = await deletarMultaPorId(id);
 
-  if (!multa) {
-    return res.status(404).json({ error: "Multa não encontrada" });
+    if (!multa) {
+      return res.status(404).json({ error: "Multa não encontrada" });
+    }
+
+    return res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro ao deletar multa" });
   }
-
-  await multa.destroy();
-  return res.status(204).send();
 };
 
 module.exports = { criar, listar, buscarPorId, atualizarPorId, deletarPorId };
