@@ -18,8 +18,6 @@ module.exports = {
           model: "usuarios",
           key: "id",
         },
-        onDelete: "RESTRICT",
-        onUpdate: "CASCADE",
       },
 
       livro_id: {
@@ -29,8 +27,6 @@ module.exports = {
           model: "livros",
           key: "id",
         },
-        onDelete: "RESTRICT",
-        onUpdate: "CASCADE",
       },
 
       data_emprestimo: {

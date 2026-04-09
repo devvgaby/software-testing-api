@@ -26,8 +26,6 @@ module.exports = {
           model: "emprestimos",
           key: "id",
         },
-        onDelete: "RESTRICT",
-        onUpdate: "CASCADE",
       },
 
       createdAt: {
