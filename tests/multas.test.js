@@ -5,25 +5,38 @@ const api = `http://localhost:${process.env.PORT || 3000}`;
 
 describe("Multas", () => {
 
+   let emprestimoId;
+
+  beforeAll(async () => {
+    const emprestimo = await axios.post(`${api}/emprestimos`, {
+      usuario_id: 1,
+      livro_id: 1,
+      data_emprestimo: "2025-04-01",
+      data_devolucao_prevista: "2025-05-01",
+    });
+
+    emprestimoId = emprestimo.data.id;
+  });
+
   test("(POST) deve criar uma nova multa", async () => {
     const res = await axios.post(`${api}/multas`, {
       valor: 50,
       pago: false,
-      emprestimo_id: 6,
+      emprestimo_id: emprestimoId,
     });
 
     expect(res.status).toBe(201);
     expect(res.data).toHaveProperty("id");
     expect(res.data.valor).toBe("50.00");
     expect(res.data.pago).toBe(false);
-    expect(res.data.emprestimo_id).toBe(6);
+    expect(res.data.emprestimo_id).toBe(emprestimoId);
   });
 
   test("(POST) deve retornar 400 sem o atributo valor", async () => {
     try {
       await axios.post(`${api}/multas`, {
         pago: false,
-        emprestimo_id: 6,
+        emprestimo_id: 1,
       });
     } catch (err) {
       expect(err.response.status).toBe(400);
@@ -35,7 +48,7 @@ describe("Multas", () => {
       await axios.post(`${api}/multas`, {
         valor: -10,
         pago: false,
-        emprestimo_id: 6,
+        emprestimo_id: 1,
       });
     } catch (err) {
       expect(err.response.status).toBe(400);
@@ -52,7 +65,7 @@ describe("Multas", () => {
     const criado = await axios.post(`${api}/multas`, {
       valor: 50,
       pago: false,
-      emprestimo_id: 6,
+      emprestimo_id: 1,
     });
 
     const res = await axios.get(`${api}/multas/${criado.data.id}`);
@@ -63,7 +76,7 @@ describe("Multas", () => {
     const criado = await axios.post(`${api}/multas`, {
       valor: 50,
       pago: false,
-      emprestimo_id: 6,
+      emprestimo_id: 1,
     });
 
     const res = await axios.put(`${api}/multas/${criado.data.id}`, {
@@ -78,7 +91,7 @@ describe("Multas", () => {
     const criado = await axios.post(`${api}/multas`, {
       valor: 50,
       pago: true,
-      emprestimo_id: 6,
+      emprestimo_id: 1,
     });
 
     const res = await axios.delete(`${api}/multas/${criado.data.id}`);
