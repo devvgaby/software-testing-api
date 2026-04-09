@@ -65,14 +65,15 @@ const deletarPorId = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const livro = await deletarLivroPorId(id);
+    const deletado = await deletarLivroPorId(id);
 
-    if (!livro) {
+    if (!deletado) {
       return res.status(404).json({ erro: "Livro não encontrado" });
     }
+
     return res.status(204).send();
   } catch (error) {
-    return res.status(500).json({ erro: "Erro interno do servidor" });
+    return res.status(500).json({ erro: "Erro ao deletar livro" });
   }
 };
 
