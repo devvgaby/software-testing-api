@@ -10,7 +10,7 @@ describe("Usuários", () => {
   });
 
   test("deve retornar um usuário pelo id", async () => {
-    const res = await axios.get(`${api}/usuarios/1`);
+    const res = await axios.get(`${api}/usuarios/5`);
     expect(res.status).toBe(200);
     expect(res.data).toHaveProperty("id");
     expect(res.data).toHaveProperty("nome");
