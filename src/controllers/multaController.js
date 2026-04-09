@@ -33,8 +33,14 @@ const criar = async (req, res) => {
       return res.status(400).json({ error: "valor deve ser maior que zero" });
     }
 
-  const multa = await Multa.create({ valor, pago, emprestimo_id });
-  return res.status(201).json(formatar(multa));
+    const multa = await criarMulta({ valor, pago, emprestimo_id });
+
+    return res.status(201).json(formatar(multa));
+  } catch (err) {
+  
+    console.error(err);
+    return res.status(500).json({ error: "Erro ao criar multa" });
+  }
 };
 
 const listar = async (req, res) => {
