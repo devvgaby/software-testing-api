@@ -36,6 +36,8 @@ const deletarLivroPorId = async (id) => {
   if (!livro) return null;
 
   await livro.destroy();
+
+  return true;
 };
 
 
