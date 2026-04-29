@@ -46,7 +46,6 @@ const criar = async (req, res) => {
 const listar = async (req, res) => {
   try {
     const multas = await listarMultas();
-    // Garante que só tentará formatar se houver multas
     return res.status(200).json(multas.map(formatar));
   } catch (err) {
     console.error(err);
