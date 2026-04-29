@@ -28,9 +28,13 @@ test("PUT /livros/id atualizar livro", async () => {
   expect(res.body.autor).toBe("Martin Code");
 });
 
-test("DELETE /livros/id deletar livro", async () => {
+test("DELETE /livros/:id deletar livro", async () => {
+  const criado = await request(api)
+    .post("/livros")
+    .send({ titulo: "Livro Deletar", autor: "Autor" });
+
   const res = await request(api)
-    .delete("/livros/1");
+    .delete(`/livros/${criado.body.id}`);
 
   expect(res.status).toBe(204);
 });
