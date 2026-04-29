@@ -135,3 +135,41 @@ test("DELETE /emprestimos/:id deve retornar 404 sem um empréstimo existente", a
     expect(err.response.status).toBe(404);
   }
 });
+
+test("GET /emprestimos/:id deve retornar um empréstimo específico", async () => {
+  const criado = await axios.post(`${api}/emprestimos`, {
+    usuario_id: 1,
+    livro_id: 1,
+    data_emprestimo: "2024-06-01",
+    data_devolucao_prevista: "2024-06-15",
+  });
+
+  const id = criado.data.id;
+
+  const res = await axios.get(`${api}/emprestimos/${id}`);
+
+  expect(res.status).toBe(200);
+  expect(res.data).toHaveProperty("id", id);
+  expect(res.data.usuario_id).toBe(1);
+});
+
+test("POST /emprestimos deve retornar 400 para um livro já emprestado", async () => {
+  await axios.post(`${api}/emprestimos`, {
+    usuario_id: 1,
+    livro_id: 1,
+    data_emprestimo: "2024-06-01",
+    data_devolucao_prevista: "2024-06-15",
+  });
+
+  try {
+    await axios.post(`${api}/emprestimos`, {
+      usuario_id: 2,
+      livro_id: 1, 
+      data_emprestimo: "2024-06-02",
+      data_devolucao_prevista: "2024-06-16",
+    });
+  } catch (err) {
+    expect(err.response.status).toBe(400);
+    expect(err.response.data).toHaveProperty("message");
+  }
+});
