@@ -1,5 +1,5 @@
-const axios = require('axios');
-require('dotenv').config();
+const axios = require("axios");
+require("dotenv").config();
 const api = `http://localhost:${process.env.PORT || 3000}`;
 
 describe("Usuários", () => {
@@ -37,7 +37,7 @@ describe("Usuários", () => {
     expect(res.data.nome).toBe("João Silva");
     expect(res.data.tipo).toBe("aluno");
   });
-0
+  0;
   test("deve retornar 400 ao criar usuário sem nome", async () => {
     try {
       await axios.post(`${api}/usuarios`, {
@@ -64,10 +64,20 @@ describe("Usuários", () => {
 
   test("deve retornar 400 ao criar usuário com email já cadastrado", async () => {
     const email = `duplicado_${Date.now()}@email.com`;
-    await axios.post(`${api}/usuarios`, { nome: "Maria Souza", email, senha: "123456", tipo: "aluno" });
+    await axios.post(`${api}/usuarios`, {
+      nome: "Maria Souza",
+      email,
+      senha: "123456",
+      tipo: "aluno",
+    });
 
     try {
-      await axios.post(`${api}/usuarios`, { nome: "Carlos Lima", email, senha: "abcdef", tipo: "aluno" });
+      await axios.post(`${api}/usuarios`, {
+        nome: "Carlos Lima",
+        email,
+        senha: "abcdef",
+        tipo: "aluno",
+      });
     } catch (err) {
       expect(err.response.status).toBe(400);
     }
@@ -81,7 +91,9 @@ describe("Usuários", () => {
       tipo: "aluno",
     });
 
-    const res = await axios.put(`${api}/usuarios/${criado.data.id}`, { nome: "Pedro Novo" });
+    const res = await axios.put(`${api}/usuarios/${criado.data.id}`, {
+      nome: "Pedro Novo",
+    });
     expect(res.status).toBe(200);
     expect(res.data.nome).toBe("Pedro Novo");
   });

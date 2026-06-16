@@ -3,13 +3,11 @@ const { Emprestimo } = require("../models");
 const criarEmprestimo = async (
   usuario_id,
   livro_id,
-  data_emprestimo,
   data_devolucao_prevista,
 ) => {
   const emprestimo = await Emprestimo.create({
     usuario_id,
     livro_id,
-    data_emprestimo,
     data_devolucao_prevista,
     data_devolucao_real: null,
   });
@@ -36,7 +34,6 @@ const atualizarEmprestimoPorId = async (
   id,
   usuario_id,
   livro_id,
-  data_emprestimo,
   data_devolucao_prevista,
   data_devolucao_real,
 ) => {
@@ -46,8 +43,8 @@ const atualizarEmprestimoPorId = async (
 
   if (usuario_id) emprestimo.usuario_id = usuario_id;
   if (livro_id) emprestimo.livro_id = livro_id;
-  if (data_emprestimo) emprestimo.data_emprestimo = data_emprestimo;
-  if (data_devolucao_prevista) emprestimo.data_devolucao_prevista = data_devolucao_prevista;
+  if (data_devolucao_prevista)
+    emprestimo.data_devolucao_prevista = data_devolucao_prevista;
   if (data_devolucao_real) emprestimo.data_devolucao_real = data_devolucao_real;
 
   await emprestimo.save();
@@ -58,12 +55,11 @@ const atualizarEmprestimoPorId = async (
 const deletarEmprestimoPorId = async (id) => {
   const emprestimo = await Emprestimo.findByPk(id);
 
-    if (!emprestimo) return null;
+  if (!emprestimo) return null;
 
-    await emprestimo.destroy();
+  await emprestimo.destroy();
 
-    return true;
-
+  return true;
 };
 
 module.exports = {
@@ -71,5 +67,5 @@ module.exports = {
   listarEmprestimos,
   buscarEmprestimoPorId,
   atualizarEmprestimoPorId,
-  deletarEmprestimoPorId
+  deletarEmprestimoPorId,
 };

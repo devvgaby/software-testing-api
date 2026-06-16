@@ -9,4 +9,4 @@ router.get('/:id', buscarPorId);
 router.put('/:id', atualizarPorId)
 router.delete('/:id', deletarPorId)
     
-module.exports = router;
+module.exports = router;    
